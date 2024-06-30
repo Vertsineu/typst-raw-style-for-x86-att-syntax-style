@@ -1,0 +1,102 @@
+%YAML 1.2
+---
+file_extensions: [att]
+scope: source.att
+
+contexts:
+  main:
+  - include: functions
+  - include: function_disas
+  - include: endbr64
+  - include: MOV
+  - include: registers
+  - include: int_calculation
+  - include: int_calculation_logical
+  - include: int_calculation_bit
+  - include: keywords
+  - include: set_condition
+  - include: SET
+  - include: JMP
+  - include: CMOV
+  - include: PUSH
+  - include: POP
+  - include: CALL
+  - include: NOP
+  - include: sign
+  - include: strings
+  - include: comments
+  - include: directives
+  - include: numbers
+  functions:
+    - match: '<([_a-zA-Z][_0-9a-zA-Z@.]*)'
+      captures:
+        1: entity.name.function.att
+  function_disas:
+    - match: '<([.]?[_a-zA-Z][_0-9a-zA-Z@.]*)'
+      captures: 
+        1: entity.name.function.att
+    # - match: '0x[0-9a-f]+'
+    #   scope: constant.numeric.integer.att
+  endbr64:
+    - match: '\bendbr64\b'
+      scope: keyword.other
+  MOV:
+    - match: '\b(mov([blqw]?|absq?|[sz]b[lqw]|[sz]w[lq]|slq)|clt[oq]|cqto)\b'
+      scope: keyword.control.att
+  registers:
+    - match: '%(([er]?([a-d]x|si|di|bp|sp))|(r(ip|[8-9][bdw]?|1[0-5][bdw]?))|(([a-d]|si|di|bp|sp)l)|fs)\b'
+      scope: variable.att
+  int_calculation:
+    - match: '\b((lea|inc|dec|neg|add|sub|i?(mul|div))[blqw]?)\b'
+      scope: keyword.control.att
+  int_calculation_logical:
+    - match: '\b(not|xor|or|and)[blqw]?\b'
+      scope: keyword.control.att
+  int_calculation_bit:
+    - match: '\bs[ah][lr][blqw]?\b'
+      scope: keyword.control.att
+  keywords:
+    - match: '\bre(pz?|tq?)\b'
+      scope: keyword.control.att
+  set_condition:
+    - match: '\b(cmp|test)[blqw]?\b'
+      scope: keyword.control.conditional.att
+  SET:
+    - match: '\bsetn?([ez]|s|[gl]e?|[ab]e?)\b'
+      scope: keyword.control.att
+  JMP:
+    - match: '\bj(mp|n?[ez]|n?s|n?[gl]e?|n?[ab]e?)[blqw]?\b'
+      scope: keyword.control.conditional.att
+  CMOV:
+    - match: '\bcmovn?([ez]|s|[gl]e?|[ab]e?)\b'
+      scope: keyword.control.conditional.att
+  PUSH:
+    - match: '\bpushq?\b'
+      scope: keyword.control.att
+  POP:
+    - match: '\bpopq?\b'
+      scope: keyword.control.att
+  CALL:
+    - match: '\bcallq?\b'
+      scope: keyword.control.att
+  NOP:
+    - match: '\bnop[blwq]?\b'
+      scope: keyword.control.att
+  sign:
+    - match: '[-+]'
+      scope: keyword.operator.att
+  strings:
+    - match: '\\.'
+      scope: constant.character.escape.att
+  comments:
+    - match: ';.*$'
+      scope: comment.line.att
+  directives:
+    - match: '[.][a-z_]+\b'
+      scope: support.constant.att
+  numbers:
+    - match: '(\b|[$])[-+]?(0x)?([0-9a-f]{1,16})\b'
+      captures: 
+        1: constant.numeric.integer.att
+        2: constant.numeric.hex.att
+        3: constant.numeric.integer.att
